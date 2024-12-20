@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, UserPlus } from "lucide-react";
+import { LogIn, LogOut, UserPlus, Edit } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -46,6 +46,15 @@ const Navbar = () => {
                 <span className="text-sm text-muted-foreground">
                   {user.email}
                 </span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="gap-2"
+                  onClick={() => navigate("/edit-profile")}
+                >
+                  <Edit className="h-4 w-4" />
+                  Edit Profile
+                </Button>
                 <Button variant="ghost" size="sm" className="gap-2" onClick={handleLogout}>
                   <LogOut className="h-4 w-4" />
                   Logout
