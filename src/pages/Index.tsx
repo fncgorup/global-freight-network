@@ -1,5 +1,4 @@
 import { useSession } from "@supabase/auth-helpers-react";
-import Navbar from "@/components/Navbar";
 import CompanyForm from "@/components/CompanyForm";
 import CompanyDirectory from "@/components/CompanyDirectory";
 import UserProfile from "@/components/UserProfile";
@@ -9,7 +8,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
       <main>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center mb-12">
