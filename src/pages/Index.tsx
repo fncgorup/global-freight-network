@@ -2,6 +2,7 @@ import { useSession } from "@supabase/auth-helpers-react";
 import Navbar from "@/components/Navbar";
 import CompanyForm from "@/components/CompanyForm";
 import CompanyDirectory from "@/components/CompanyDirectory";
+import UserProfile from "@/components/UserProfile";
 
 const Index = () => {
   const session = useSession();
@@ -21,10 +22,15 @@ const Index = () => {
           </div>
 
           {session && (
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold mb-6">Register Your Company</h2>
-              <CompanyForm />
-            </div>
+            <>
+              <div className="mb-12">
+                <UserProfile />
+              </div>
+              <div className="mb-12">
+                <h2 className="text-2xl font-bold mb-6">Register Your Company</h2>
+                <CompanyForm />
+              </div>
+            </>
           )}
 
           <div className="mb-16">
