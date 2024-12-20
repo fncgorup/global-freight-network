@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Check, DollarSign } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const MembershipPlans = () => {
   return (
@@ -49,8 +50,8 @@ const MembershipPlans = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full text-lg py-6" variant="outline">
-                Join Free Plan
+              <Button className="w-full text-lg py-6" variant="outline" asChild>
+                <Link to="/join-free">Join Free Plan</Link>
               </Button>
             </CardFooter>
           </Card>
