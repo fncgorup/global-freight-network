@@ -1,37 +1,27 @@
 import { Button } from "@/components/ui/button";
 import { useProfile } from "@/hooks/useProfile";
 import { ProfileForm } from "@/components/profile/ProfileForm";
+import { ProfileFormSchema } from "@/components/profile/schema";
 
 const UserProfile = () => {
-  const {
-    profile,
-    isEditing,
-    formData,
-    setIsEditing,
-    handleSubmit,
-    handleChange,
-    resetForm,
-  } = useProfile();
+  const { profile, isLoading, updateProfile } = useProfile();
 
   if (!profile) return null;
+
+  const handleSubmit = async (data: ProfileFormSchema) => {
+    await updateProfile(data);
+  };
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Profile Settings</h2>
-        {!isEditing && (
-          <Button onClick={() => setIsEditing(true)}>
-            Edit Profile
-          </Button>
-        )}
       </div>
 
       <ProfileForm
-        formData={formData}
-        isEditing={isEditing}
         onSubmit={handleSubmit}
-        onChange={handleChange}
-        onCancel={resetForm}
+        defaultValues={profile}
+        isLoading={isLoading}
       />
     </div>
   );

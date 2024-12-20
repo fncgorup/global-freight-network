@@ -1,33 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
-export type ProfileFormData = {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  bio: string;
-  company: string;
-  position: string;
-  location: string;
-  website: string;
-};
+import { ProfileFormSchema } from "@/components/profile/schema";
 
 export const useProfile = () => {
-  const [profile, setProfile] = useState<any>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<ProfileFormData>({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
-    bio: "",
-    company: "",
-    position: "",
-    location: "",
-    website: "",
-  });
+  const [profile, setProfile] = useState<ProfileFormSchema | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const fetchProfile = async () => {
@@ -46,17 +24,6 @@ export const useProfile = () => {
       console.log("Fetched profile:", data);
       
       setProfile(data);
-      setFormData({
-        first_name: data.first_name || "",
-        last_name: data.last_name || "",
-        email: data.email || "",
-        phone: data.phone || "",
-        bio: data.bio || "",
-        company: data.company || "",
-        position: data.position || "",
-        location: data.location || "",
-        website: data.website || "",
-      });
     } catch (error) {
       console.error("Error fetching profile:", error);
       toast({
@@ -67,8 +34,8 @@ export const useProfile = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const updateProfile = async (formData: ProfileFormSchema) => {
+    setIsLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -87,7 +54,6 @@ export const useProfile = () => {
         description: "Profile updated successfully",
       });
       
-      setIsEditing(false);
       await fetchProfile();
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -96,31 +62,9 @@ export const useProfile = () => {
         description: "Failed to update profile",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
-
-  const resetForm = () => {
-    if (profile) {
-      setFormData({
-        first_name: profile.first_name || "",
-        last_name: profile.last_name || "",
-        email: profile.email || "",
-        phone: profile.phone || "",
-        bio: profile.bio || "",
-        company: profile.company || "",
-        position: profile.position || "",
-        location: profile.location || "",
-        website: profile.website || "",
-      });
-    }
-    setIsEditing(false);
   };
 
   useEffect(() => {
@@ -129,11 +73,7 @@ export const useProfile = () => {
 
   return {
     profile,
-    isEditing,
-    formData,
-    setIsEditing,
-    handleSubmit,
-    handleChange,
-    resetForm,
+    isLoading,
+    updateProfile,
   };
 };

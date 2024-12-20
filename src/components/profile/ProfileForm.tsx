@@ -4,30 +4,29 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useProfile } from "@/hooks/useProfile";
 import { ProfileFormSchema, profileFormSchema } from "./schema";
 
-export function ProfileForm() {
-  const { profile, updateProfile, isLoading } = useProfile();
+interface ProfileFormProps {
+  onSubmit: (data: ProfileFormSchema) => Promise<void>;
+  defaultValues?: Partial<ProfileFormSchema>;
+  isLoading?: boolean;
+}
 
+export function ProfileForm({ onSubmit, defaultValues, isLoading }: ProfileFormProps) {
   const form = useForm<ProfileFormSchema>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: {
-      first_name: profile?.first_name || "",
-      last_name: profile?.last_name || "",
-      email: profile?.email || "",
-      phone: profile?.phone || "",
-      company: profile?.company || "",
-      position: profile?.position || "",
-      location: profile?.location || "",
-      website: profile?.website || "",
-      bio: profile?.bio || "",
+    defaultValues: defaultValues || {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      company: "",
+      position: "",
+      location: "",
+      website: "",
+      bio: "",
     },
   });
-
-  async function onSubmit(data: ProfileFormSchema) {
-    await updateProfile(data);
-  }
 
   return (
     <Form {...form}>
