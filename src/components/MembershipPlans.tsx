@@ -8,9 +8,62 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Check, DollarSign } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const MembershipPlans = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const handlePremiumSubscription = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to subscribe to the Premium plan",
+          variant: "destructive",
+        });
+        navigate("/auth");
+        return;
+      }
+
+      const response = await fetch(
+        "https://yuxkrdvcrnawswkofulw.functions.supabase.co/create-checkout-session",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      const { url, error } = await response.json();
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (url) {
+        window.location.href = url;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to initiate subscription process",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -91,7 +144,12 @@ const MembershipPlans = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full text-lg py-6">Join Premium Plan</Button>
+              <Button 
+                className="w-full text-lg py-6"
+                onClick={handlePremiumSubscription}
+              >
+                Join Premium Plan
+              </Button>
             </CardFooter>
           </Card>
         </div>
