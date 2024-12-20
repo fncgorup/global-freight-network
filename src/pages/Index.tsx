@@ -1,10 +1,10 @@
-import { useAuth } from "@supabase/auth-helpers-react";
+import { useSession } from "@supabase/auth-helpers-react";
 import Navbar from "@/components/Navbar";
 import CompanyForm from "@/components/CompanyForm";
 import CompanyDirectory from "@/components/CompanyDirectory";
 
 const Index = () => {
-  const { user } = useAuth();
+  const session = useSession();
 
   return (
     <div className="min-h-screen bg-background">
@@ -17,7 +17,7 @@ const Index = () => {
           </p>
         </div>
 
-        {user && (
+        {session && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold mb-6">Register Your Company</h2>
             <CompanyForm />

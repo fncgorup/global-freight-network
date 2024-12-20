@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@supabase/auth-helpers-react";
+import { useSession } from "@supabase/auth-helpers-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,20 +9,20 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const CompanyForm = () => {
-  const { user } = useAuth();
+  const session = useSession();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!user) return;
+    if (!session?.user) return;
 
     setLoading(true);
     const formData = new FormData(e.currentTarget);
     
     try {
-      const { error } = await supabase.from("companies").insert({
+      const { error } = await supabase.from("companies").insert([{
         name: formData.get("name"),
         role: formData.get("role"),
         bio: formData.get("bio"),
@@ -31,8 +31,8 @@ const CompanyForm = () => {
         telephone: formData.get("telephone"),
         address: formData.get("address"),
         country: formData.get("country"),
-        user_id: user.id,
-      });
+        user_id: session.user.id,
+      }]);
 
       if (error) throw error;
 
