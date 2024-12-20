@@ -37,7 +37,7 @@ serve(async (req) => {
       limit: 1
     })
 
-    const price_id = "price_1OyQFtBxJqvlzHDcPYYYYYYY" // Replace with your actual price ID
+    const price_id = "price_1QYAQCHXzUzVRdHhlZD6BC42" // Updated price ID
 
     let customer_id = undefined
     if (customers.data.length > 0) {
