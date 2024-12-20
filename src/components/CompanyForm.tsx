@@ -16,12 +16,35 @@ const CompanyForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!session?.user) return;
+    if (!session?.user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to register a company.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setLoading(true);
     const formData = new FormData(e.currentTarget);
     
     try {
+      // Check if user already has a company
+      const { data: existingCompanies } = await supabase
+        .from("companies")
+        .select("id")
+        .eq("user_id", session.user.id)
+        .limit(1);
+
+      if (existingCompanies && existingCompanies.length > 0) {
+        toast({
+          title: "Error",
+          description: "You already have a registered company.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { error } = await supabase.from("companies").insert([{
         name: String(formData.get("name")),
         role: String(formData.get("role")),
