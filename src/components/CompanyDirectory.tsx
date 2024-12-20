@@ -41,6 +41,37 @@ const CompanyDirectory = () => {
     };
 
     fetchCompanies();
+
+    // Subscribe to real-time changes
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen to all changes (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'companies'
+        },
+        async (payload) => {
+          console.log('Real-time update received:', payload);
+          
+          // Refresh the companies list when any change occurs
+          const { data, error } = await supabase
+            .from("companies")
+            .select("*")
+            .order("name");
+            
+          if (!error && data) {
+            setCompanies(data);
+          }
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription on component unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   if (loading) {
