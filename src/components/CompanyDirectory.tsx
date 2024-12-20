@@ -1,25 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Company } from "@/types/company";
+import { CompanyList } from "./company/CompanyList";
 
-interface Company {
-  id: string;
-  name: string;
-  role: string;
-  country: string;
-  contact_person: string;
-  email: string;
-  telephone: string;
-}
-
-const CompanyDirectory = () => {
+export default function CompanyDirectory() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -48,24 +32,22 @@ const CompanyDirectory = () => {
   useEffect(() => {
     fetchCompanies();
 
-    // Subscribe to real-time changes
     const channel = supabase
-      .channel('schema-db-changes')
+      .channel("companies-changes")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*', // Listen to all changes (INSERT, UPDATE, DELETE)
-          schema: 'public',
-          table: 'companies'
+          event: "*",
+          schema: "public",
+          table: "companies",
         },
         async (payload) => {
           console.log('Real-time update received:', payload);
-          await fetchCompanies(); // Refresh the companies list when any change occurs
+          await fetchCompanies();
         }
       )
       .subscribe();
 
-    // Cleanup subscription on component unmount
     return () => {
       console.log("Cleaning up subscription");
       supabase.removeChannel(channel);
@@ -77,33 +59,8 @@ const CompanyDirectory = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Company Name</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Country</TableHead>
-            <TableHead>Contact Person</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Telephone</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {companies.map((company) => (
-            <TableRow key={company.id}>
-              <TableCell className="font-medium">{company.name}</TableCell>
-              <TableCell>{company.role}</TableCell>
-              <TableCell>{company.country}</TableCell>
-              <TableCell>{company.contact_person}</TableCell>
-              <TableCell>{company.email}</TableCell>
-              <TableCell>{company.telephone}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className="space-y-6">
+      <CompanyList companies={companies} />
     </div>
   );
-};
-
-export default CompanyDirectory;
+}
