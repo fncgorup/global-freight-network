@@ -23,14 +23,14 @@ const CompanyForm = () => {
     
     try {
       const { error } = await supabase.from("companies").insert([{
-        name: formData.get("name"),
-        role: formData.get("role"),
-        bio: formData.get("bio"),
-        contact_person: formData.get("contact_person"),
-        email: formData.get("email"),
-        telephone: formData.get("telephone"),
-        address: formData.get("address"),
-        country: formData.get("country"),
+        name: String(formData.get("name")),
+        role: String(formData.get("role")),
+        bio: formData.get("bio")?.toString() || null,
+        contact_person: formData.get("contact_person")?.toString() || null,
+        email: formData.get("email")?.toString() || null,
+        telephone: formData.get("telephone")?.toString() || null,
+        address: formData.get("address")?.toString() || null,
+        country: formData.get("country")?.toString() || null,
         user_id: session.user.id,
       }]);
 
