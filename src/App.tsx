@@ -1,30 +1,30 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import AuthPage from "./pages/Auth";
-import Membership from "./pages/Membership";
-import JoinFree from "./pages/JoinFree";
+import Navbar from "@/components/Navbar";
+import Index from "@/pages/Index";
+import Auth from "@/pages/Auth";
+import JoinFree from "@/pages/JoinFree";
+import Membership from "@/pages/Membership";
+import UserProfile from "@/components/UserProfile";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/membership" element={<Membership />} />
-          <Route path="/join-free" element={<JoinFree />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <Router>
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/join-free" element={<JoinFree />} />
+            <Route path="/membership" element={<Membership />} />
+            <Route path="/edit-profile" element={<UserProfile />} />
+          </Routes>
+        </main>
+        <Toaster />
+      </div>
+    </Router>
+  );
+}
 
 export default App;
