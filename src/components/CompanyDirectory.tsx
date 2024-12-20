@@ -23,23 +23,29 @@ const CompanyDirectory = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("companies")
-          .select("*")
-          .order("name");
+  const fetchCompanies = async () => {
+    try {
+      console.log("Fetching companies...");
+      const { data, error } = await supabase
+        .from("companies")
+        .select("*")
+        .order("name");
 
-        if (error) throw error;
-        setCompanies(data || []);
-      } catch (error) {
+      if (error) {
         console.error("Error fetching companies:", error);
-      } finally {
-        setLoading(false);
+        throw error;
       }
-    };
+      
+      console.log("Companies fetched:", data);
+      setCompanies(data || []);
+    } catch (error) {
+      console.error("Error in fetchCompanies:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCompanies();
 
     // Subscribe to real-time changes
@@ -54,22 +60,14 @@ const CompanyDirectory = () => {
         },
         async (payload) => {
           console.log('Real-time update received:', payload);
-          
-          // Refresh the companies list when any change occurs
-          const { data, error } = await supabase
-            .from("companies")
-            .select("*")
-            .order("name");
-            
-          if (!error && data) {
-            setCompanies(data);
-          }
+          await fetchCompanies(); // Refresh the companies list when any change occurs
         }
       )
       .subscribe();
 
     // Cleanup subscription on component unmount
     return () => {
+      console.log("Cleaning up subscription");
       supabase.removeChannel(channel);
     };
   }, []);
