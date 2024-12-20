@@ -2,7 +2,6 @@ import { useSession } from "@supabase/auth-helpers-react";
 import Navbar from "@/components/Navbar";
 import CompanyForm from "@/components/CompanyForm";
 import CompanyDirectory from "@/components/CompanyDirectory";
-import MembershipPlans from "@/components/MembershipPlans";
 
 const Index = () => {
   const session = useSession();
@@ -33,8 +32,6 @@ const Index = () => {
             <CompanyDirectory />
           </div>
         </div>
-
-        <MembershipPlans />
       </main>
     </div>
   );
